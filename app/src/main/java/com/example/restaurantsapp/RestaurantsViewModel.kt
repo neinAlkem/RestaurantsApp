@@ -3,11 +3,32 @@ package com.example.restaurantsapp
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class  RestaurantsViewModel(
     private val stateHandle: SavedStateHandle
 ) : ViewModel(){
-    val state = mutableStateOf(dummyRestaurants.restoreSelections())
+    private var restInterface : RestaurantsAPIService
+    val state = mutableStateOf(
+        emptyList<Restaurant>()
+    )
+    private lateinit var restaurantCall : Call<List<Restaurant>>
+    init {
+        val retrofit : Retrofit = Retrofit.Builder()
+            .addConverterFactory(
+                GsonConverterFactory.create()
+        )
+            .baseUrl("https://restaurantsapp-e2bc4-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .build()
+        restInterface = retrofit.create(
+                RestaurantsAPIService::class.java
+            )
+        getRestaurant()
+    }
 
     fun toggleFavorite(id : Int) {
         val restaurant = state.value.toMutableList()
@@ -38,6 +59,36 @@ class  RestaurantsViewModel(
         }
         return this
     }
+
+     fun getRestaurant() {
+        restaurantCall = restInterface.getRestaurant()
+        restaurantCall.enqueue(
+            object : Callback<List<Restaurant>>{
+                override fun onResponse(
+                    call : Call<List<Restaurant>>,
+                    response: Response<List<Restaurant>>
+                ) {
+                    response.body()?.let{ restaurants ->
+                        state.value =
+                            restaurants.restoreSelections()
+                    }
+                }
+
+                override fun onFailure(
+                    call: Call<List<Restaurant>>,
+                    t : Throwable
+                ) {
+                    t.printStackTrace()
+                }
+            }
+        )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        restaurantCall.cancel()
+    }
 }
+
 
 

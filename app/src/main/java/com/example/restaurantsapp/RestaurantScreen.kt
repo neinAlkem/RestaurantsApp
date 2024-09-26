@@ -163,6 +163,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -179,6 +180,9 @@ import com.example.restaurantsapp.ui.theme.RestaurantsAppTheme
 @Composable
 fun RestaurantsScreen() {
     val viewModel: RestaurantsViewModel = viewModel()
+    LaunchedEffect(key1 = "request_restaurant") {
+    viewModel.getRestaurant()
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
