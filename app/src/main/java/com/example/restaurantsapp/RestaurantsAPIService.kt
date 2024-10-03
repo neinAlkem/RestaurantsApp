@@ -4,5 +4,5 @@ import retrofit2.http.GET
 
 interface RestaurantsAPIService {
     @GET("restaurants.json")
-    fun getRestaurant() : Call<List<Restaurant>>
+    suspend fun getRestaurant() : List<Restaurant>
 }
