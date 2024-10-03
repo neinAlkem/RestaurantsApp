@@ -67,10 +67,10 @@ class  RestaurantsViewModel(
             }
             return restaurantsMap.values.toList()
         }
-        return thisD
+        return this
     }
 
-    private suspend fun getRemnoteRestaurants():
+    private suspend fun getRemoteRestaurants():
             List<Restaurant>{
         return withContext(Dispatchers.IO){
             restInterface.getRestaurant()
@@ -79,7 +79,7 @@ class  RestaurantsViewModel(
 
       fun getRestaurant() {
          viewModelScope.launch(errorHandler) {
-             val restaurants = getRemnoteRestaurants()
+             val restaurants = getRemoteRestaurants()
              state.value = restaurants.restoreSelections()
          }
      }
